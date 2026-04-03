@@ -1,0 +1,198 @@
+{
+  "users": [
+    {
+      "id": "986ed373-e63e-4990-b307-9372c0b49dac",
+      "role": "provider",
+      "name": "Dr Demo",
+      "email": "pcp1775185663@example.com",
+      "passwordHash": "0be02f73ad0f8bacff0f8be47bbc1383:7a799f603ad178d682da8a69129c35de139a178421f54b1b087310e6a34cae807e61e224b406c11bc6d2a7c55cba61b42121a1dd65fa4aac69c04490ab835b62",
+      "pcpEmail": "",
+      "clinicCode": "DEMO-CLINIC",
+      "createdAt": "2026-04-03T09:07:43.481Z"
+    },
+    {
+      "id": "f86d8979-82f6-4a1f-ae15-a5c5cdf4ba16",
+      "role": "patient",
+      "name": "Patient Demo",
+      "email": "patient1775185663@example.com",
+      "passwordHash": "069da4164a952c54d0caf0245fbe08cd:b561601e26466338232241f188e6f1cf792a06cd42fe1cd5ba3282855a3b8637f3a7d132cf229aff3034e4e03d8c1648bee842da9a846d2709640b3e32919f60",
+      "pcpEmail": "pcp1775185663@example.com",
+      "clinicCode": "",
+      "createdAt": "2026-04-03T09:07:43.545Z"
+    },
+    {
+      "id": "38bb7963-80f2-44d2-bad0-d6d2893b18c7",
+      "role": "patient",
+      "name": "Zach Dekraai",
+      "email": "zdekraai181@gmail.com",
+      "passwordHash": "f62de107f2092704f997b4187e0c3e37:eb5cd07e335d684bfe4492c2b605b0bc1c8c414d0328a75c32add4d473923ca9c355f5e47f89fe304bd4b0240c27ca742c4bc752d161254d370a192bcea0b3d2",
+      "pcpEmail": "doctor@clinic.com",
+      "clinicCode": "",
+      "createdAt": "2026-04-03T09:11:10.624Z"
+    },
+    {
+      "id": "d7d2c644-8832-4be0-b2d2-2b602a544e1d",
+      "role": "provider",
+      "name": "Dr Demo",
+      "email": "pcp1775186364@example.com",
+      "passwordHash": "9948615fd3914dfdb818e368ef3bbca0:8d4642fb3c79269abaeb78c6a1f9cfbd1b8731b967cae6a3cdd26e02938875aa3a4b79bdea55cd0e191ee1e165aecde1ceb1de6213ff7d723d10f3ff8f00ceeb",
+      "pcpEmail": "",
+      "clinicCode": "DEMO-CLINIC",
+      "createdAt": "2026-04-03T09:19:23.944Z"
+    },
+    {
+      "id": "e7ed884e-9a0e-4aa2-a19a-6feeea624058",
+      "role": "patient",
+      "name": "Patient Demo",
+      "email": "patient1775186364@example.com",
+      "passwordHash": "d86048bf00cea99cd5d034fd734058b7:2b6f6afaa312a8e3d9f990a243867578e8864dae122f87afe734cb770135ada53befad27b790f5d5ad886e5705e9e53ebf27f567d8d5ff2ef4f50a60315c26c7",
+      "pcpEmail": "pcp1775186364@example.com",
+      "clinicCode": "",
+      "createdAt": "2026-04-03T09:19:24.018Z"
+    },
+    {
+      "id": "f5548b6b-6578-4eef-9c5a-6ab1377007e1",
+      "role": "provider",
+      "name": "Dr Wear",
+      "email": "wearprovider@example.com",
+      "passwordHash": "5f3a45de7f5deb2d8574a770ab3d7988:a6c644fd7a20d0f1dcd2bbb2ae535ebe3f16cb42ed78096154b59eec84e22a3bdacc5fe5367313f0ada0dea49b13c349fe7127bd3d8b5d4d86cd7a957d6a2424",
+      "pcpEmail": "",
+      "clinicCode": "WEAR-CLINIC",
+      "createdAt": "2026-04-03T09:33:51.577Z"
+    },
+    {
+      "id": "1f1e426d-ea4f-4d2e-9326-0971f2540060",
+      "role": "patient",
+      "name": "Patient Wear",
+      "email": "wearpatient@example.com",
+      "passwordHash": "8fcf9d5ceb5a02ac665ed973bac5b448:f3de2f8d7afe7160eb1eb7348d9cc9c20a3c06a900dc374401eca2a1d58294f74596f40d8d548b2f38dbff72433bce83a6d36601ced177558746be0fd06f3d95",
+      "pcpEmail": "wearprovider@example.com",
+      "clinicCode": "",
+      "createdAt": "2026-04-03T09:33:51.654Z"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "4568abbf-7fd8-4c6d-986e-ded8c8e18024",
+      "providerId": "986ed373-e63e-4990-b307-9372c0b49dac",
+      "patientId": "f86d8979-82f6-4a1f-ae15-a5c5cdf4ba16",
+      "title": "Check post-meal trends",
+      "message": "Please review your post-meal numbers this week and bring the export to your next visit.",
+      "createdAt": "2026-04-03T09:07:43.556Z"
+    },
+    {
+      "id": "1963cbfc-9c7f-4d3f-946a-601d56d89c39",
+      "providerId": "d7d2c644-8832-4be0-b2d2-2b602a544e1d",
+      "patientId": "e7ed884e-9a0e-4aa2-a19a-6feeea624058",
+      "title": "Trend review",
+      "message": "Upload your chart before the visit.",
+      "createdAt": "2026-04-03T09:19:24.087Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "0de1131c-67c2-4ef0-bfdf-61779d037894",
+      "senderId": "e7ed884e-9a0e-4aa2-a19a-6feeea624058",
+      "recipientId": "d7d2c644-8832-4be0-b2d2-2b602a544e1d",
+      "message": "I shared my chart and have a lunch question.",
+      "createdAt": "2026-04-03T09:19:24.096Z"
+    }
+  ],
+  "sharedCharts": [
+    {
+      "id": "a1cede4b-a022-49b9-b952-2b5180457d25",
+      "patientId": "e7ed884e-9a0e-4aa2-a19a-6feeea624058",
+      "providerId": "d7d2c644-8832-4be0-b2d2-2b602a544e1d",
+      "summary": {
+        "count": 2,
+        "average": 128.5,
+        "latest": 145
+      },
+      "entries": [
+        {
+          "date": "2026-04-01",
+          "time": "08:00",
+          "notes": "",
+          "bg": 112,
+          "context": "Pre-meal"
+        },
+        {
+          "date": "2026-04-02",
+          "time": "08:15",
+          "notes": "",
+          "bg": 145,
+          "context": "Pre-meal"
+        }
+      ],
+      "sharedAt": "2026-04-03T09:19:24.090Z"
+    }
+  ],
+  "emergencyContacts": [
+    {
+      "id": "27ea5e7c-8084-40e4-8f1b-ba27fdf62cc5",
+      "userId": "1f1e426d-ea4f-4d2e-9326-0971f2540060",
+      "name": "Jamie Wear",
+      "relationship": "Spouse",
+      "phone": "555-0101",
+      "email": "jamie@example.com",
+      "notificationMethod": "sms",
+      "updatedAt": "2026-04-03T09:34:15.062Z"
+    }
+  ],
+  "emergencyAlerts": [
+    {
+      "id": "ba313b7b-6340-42ca-9985-3b016468074a",
+      "userId": "1f1e426d-ea4f-4d2e-9326-0971f2540060",
+      "providerId": "f5548b6b-6578-4eef-9c5a-6ab1377007e1",
+      "contactId": "27ea5e7c-8084-40e4-8f1b-ba27fdf62cc5",
+      "contactName": "Jamie Wear",
+      "notificationMethod": "sms",
+      "reason": "User marked as unresponsive",
+      "metrics": {
+        "fallDetected": true,
+        "systolic": 78,
+        "spo2": 84,
+        "heartRate": 38,
+        "diastolic": 48,
+        "responsiveness": "unresponsive"
+      },
+      "createdAt": "2026-04-03T09:34:15.064Z",
+      "status": "prototype_notified"
+    }
+  ],
+  "resetTokens": [],
+  "sessions": {
+    "1581810c-4d77-421e-b43f-f9eafa2dfe9d": {
+      "userId": "986ed373-e63e-4990-b307-9372c0b49dac",
+      "createdAt": "2026-04-03T09:07:43.481Z"
+    },
+    "aeda6bf1-aab9-4d5b-823f-83dc0bef0a7d": {
+      "userId": "f86d8979-82f6-4a1f-ae15-a5c5cdf4ba16",
+      "createdAt": "2026-04-03T09:07:43.545Z"
+    },
+    "dd692866-12ee-49e3-be8e-636914d54df0": {
+      "userId": "d7d2c644-8832-4be0-b2d2-2b602a544e1d",
+      "createdAt": "2026-04-03T09:19:23.945Z"
+    },
+    "dc4e0445-2bd4-47ec-81a4-afed44d980fa": {
+      "userId": "e7ed884e-9a0e-4aa2-a19a-6feeea624058",
+      "createdAt": "2026-04-03T09:19:24.018Z"
+    },
+    "aeecba4d-845e-4251-bd56-2f88d59c58e2": {
+      "userId": "f5548b6b-6578-4eef-9c5a-6ab1377007e1",
+      "createdAt": "2026-04-03T09:33:51.577Z"
+    },
+    "3a92d369-9bad-4fc6-a9cf-ba2c155287f8": {
+      "userId": "1f1e426d-ea4f-4d2e-9326-0971f2540060",
+      "createdAt": "2026-04-03T09:33:51.654Z"
+    },
+    "288abcb0-3b19-403f-bf1d-45221d18c1f4": {
+      "userId": "f5548b6b-6578-4eef-9c5a-6ab1377007e1",
+      "createdAt": "2026-04-03T09:34:15.014Z"
+    },
+    "786fa825-c1d0-4db5-8ff2-ca06027f1041": {
+      "userId": "1f1e426d-ea4f-4d2e-9326-0971f2540060",
+      "createdAt": "2026-04-03T09:34:15.059Z"
+    }
+  }
+}

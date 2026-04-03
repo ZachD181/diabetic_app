@@ -1,0 +1,12 @@
+{
+  "name": "insulin-bolus-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web app for clinician-configured insulin bolus estimation with USDA food carb lookup.",
+  "dependencies": {
+    "pg": "^8.13.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

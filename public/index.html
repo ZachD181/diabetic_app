@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bolus/Fast Acting Compass</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div id="auth-shell" class="auth-shell">
+      <section class="auth-hero">
+        <p class="eyebrow">Connected diabetes support</p>
+        <h1>Bolus/Fast Acting Compass</h1>
+        <p class="auth-copy">
+          Sign in to manage dose estimates, glucose logs, and clinician recommendations in one place.
+        </p>
+        <div class="hero-chip-list">
+          <span class="hero-chip">Patient login</span>
+          <span class="hero-chip">Provider dashboard</span>
+          <span class="hero-chip">PCP linking at registration</span>
+        </div>
+        <div class="action-row">
+          <button id="guest-button" type="button">Continue as guest</button>
+        </div>
+      </section>
+
+      <section class="auth-panels">
+        <article class="panel auth-panel">
+          <div class="panel-heading">
+            <p class="section-kicker">Sign in</p>
+            <h2>Return to your account</h2>
+          </div>
+          <form id="login-form" class="field-grid auth-grid">
+            <label>
+              Email
+              <input id="login-email" type="email" autocomplete="email" />
+            </label>
+            <label>
+              Password
+              <input id="login-password" type="password" autocomplete="current-password" />
+            </label>
+            <button type="submit">Login</button>
+          </form>
+        </article>
+
+        <article class="panel auth-panel">
+          <div class="panel-heading">
+            <p class="section-kicker">Register</p>
+            <h2>Create a patient or provider account</h2>
+          </div>
+          <form id="register-form" class="field-grid auth-grid">
+            <label>
+              I am registering as
+              <select id="register-role">
+                <option value="patient">Patient</option>
+                <option value="provider">PCP / clinician</option>
+              </select>
+            </label>
+            <label>
+              Full name
+              <input id="register-name" type="text" autocomplete="name" />
+            </label>
+            <label>
+              Email
+              <input id="register-email" type="email" autocomplete="email" />
+            </label>
+            <label>
+              Password
+              <input id="register-password" type="password" autocomplete="new-password" />
+            </label>
+            <label id="pcp-email-field" class="field-span">
+              PCP or diabetes clinic email
+              <input id="register-pcp-email" type="email" placeholder="doctor@clinic.com" />
+            </label>
+            <label id="clinic-code-field" class="field-span is-hidden">
+              Clinic access code
+              <input id="register-clinic-code" type="text" placeholder="Example: MOUNTAIN-ENDO" />
+            </label>
+            <p id="register-role-copy" class="panel-copy field-span">
+              Patients can link a PCP during registration so clinicians can send recommendations inside the app.
+            </p>
+            <button type="submit">Create account</button>
+          </form>
+        </article>
+
+        <article class="panel auth-panel">
+          <div class="panel-heading">
+            <p class="section-kicker">Reset password</p>
+            <h2>Prototype reset flow</h2>
+          </div>
+          <form id="request-reset-form" class="field-grid auth-grid">
+            <label>
+              Account email
+              <input id="reset-email" type="email" autocomplete="email" />
+            </label>
+            <button type="submit">Get reset code</button>
+          </form>
+          <form id="confirm-reset-form" class="field-grid auth-grid">
+            <label>
+              Reset code
+              <input id="reset-code" type="text" />
+            </label>
+            <label>
+              New password
+              <input id="reset-new-password" type="password" autocomplete="new-password" />
+            </label>
+            <button type="submit">Set new password</button>
+          </form>
+          <p class="panel-copy">This local prototype shows the reset code in-app because no email service is configured.</p>
+        </article>
+      </section>
+
+      <div id="auth-status" class="status-text auth-status" aria-live="polite"></div>
+    </div>
+
+    <div id="app-shell" class="app-shell is-hidden">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Type 1 diabetes support</p>
+          <h1>Bolus/Fast Acting Compass</h1>
+        </div>
+        <div class="header-actions">
+          <div>
+            <p id="user-greeting" class="header-copy"></p>
+            <p id="linked-clinician" class="subtle-text"></p>
+          </div>
+          <button id="logout-button" type="button" class="secondary-button">Logout</button>
+        </div>
+      </header>
+
+      <nav class="tab-bar" aria-label="Main sections">
+        <button class="tab-button is-active" type="button" data-tab-target="dose">Dose</button>
+        <button class="tab-button" type="button" data-tab-target="foods">Foods</button>
+        <button class="tab-button" type="button" data-tab-target="logbook">Logbook</button>
+        <button class="tab-button" type="button" data-tab-target="wearables">Wearables</button>
+        <button class="tab-button" type="button" data-tab-target="care">Care</button>
+      </nav>
+
+      <main class="tab-panels">
+        <section class="tab-panel is-active" data-tab-panel="dose">
+          <article class="panel hero-panel">
+            <div>
+              <p class="section-kicker">Bolus/Fast Acting estimate</p>
+              <h2>Calculate a meal dose with clinician-configured settings.</h2>
+              <p class="panel-copy">
+                This tool is an estimate only. Follow your endocrinologist or diabetes educator's instructions if they differ from what appears here.
+              </p>
+            </div>
+            <div class="hero-chip-list">
+              <span class="hero-chip">Food lookup linked</span>
+              <span class="hero-chip">Insulin on board support</span>
+              <span class="hero-chip">Provider recommendations</span>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Settings</p>
+              <h3>Dose inputs</h3>
+            </div>
+
+            <form id="calculator-form" class="field-grid">
+              <label>
+                Current blood sugar (mg/dL)
+                <input id="current-bg" type="number" min="20" max="600" step="1" value="180" />
+              </label>
+
+              <label>
+                Target blood sugar (mg/dL)
+                <input id="target-bg" type="number" min="70" max="180" step="1" value="110" />
+              </label>
+
+              <label>
+                Carb ratio (grams per 1 unit)
+                <input id="carb-ratio" type="number" min="1" max="100" step="0.1" value="12" />
+              </label>
+
+              <label>
+                Correction factor (mg/dL lowered by 1 unit)
+                <input id="correction-factor" type="number" min="1" max="200" step="0.1" value="50" />
+              </label>
+
+              <label>
+                Insulin on board (units)
+                <input id="insulin-on-board" type="number" min="0" max="50" step="0.1" value="0" />
+              </label>
+
+              <label>
+                Manual carb entry (grams)
+                <input id="manual-carbs" type="number" min="0" max="500" step="0.1" value="0" />
+              </label>
+
+              <label>
+                Round to nearest increment
+                <select id="rounding-step">
+                  <option value="1">1.0 units</option>
+                  <option value="0.5" selected>0.5 units</option>
+                  <option value="0.25">0.25 units</option>
+                </select>
+              </label>
+
+              <label>
+                IOB subtraction from correction
+                <select id="iob-mode">
+                  <option value="none">Do not subtract</option>
+                  <option value="full" selected>Subtract full IOB</option>
+                  <option value="half">Subtract 50% of IOB</option>
+                </select>
+              </label>
+
+              <label class="checkbox-field">
+                <input id="allow-negative-correction" type="checkbox" />
+                Apply negative correction when blood sugar is below target
+              </label>
+            </form>
+          </article>
+
+          <article class="panel summary-panel">
+            <div class="dose-callout">
+              <p class="section-kicker">Estimated total</p>
+              <strong id="dose-total">0.0 units</strong>
+              <p id="dose-caption">Enter your settings to calculate an estimate.</p>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span>Meal bolus/fast acting</span>
+                <strong id="meal-bolus">0.0 units</strong>
+              </div>
+              <div class="stat-card">
+                <span>Raw correction</span>
+                <strong id="raw-correction-bolus">0.0 units</strong>
+              </div>
+              <div class="stat-card">
+                <span>IOB adjustment</span>
+                <strong id="iob-adjustment-output">0.0 units</strong>
+              </div>
+              <div class="stat-card">
+                <span>Applied correction</span>
+                <strong id="correction-bolus">0.0 units</strong>
+              </div>
+              <div class="stat-card">
+                <span>Total carbs counted</span>
+                <strong id="total-carb-output">0 g</strong>
+              </div>
+            </div>
+
+            <div id="warnings" class="warning-list"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="foods">
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Carb reference</p>
+              <h2>Search foods and add carbs into the dose calculator.</h2>
+            </div>
+
+            <form id="food-search-form" class="search-bar">
+              <label class="sr-only" for="food-query">Search foods</label>
+              <input id="food-query" name="foodQuery" type="search" placeholder="Search apples, rice, cereal, granola bar..." />
+              <button type="submit">Search</button>
+            </form>
+
+            <p class="panel-copy">
+              Food data comes from USDA FoodData Central. Brand, recipe, and portion sizes vary, so verify against packaging when possible.
+            </p>
+
+            <div id="food-status" class="status-text" aria-live="polite"></div>
+            <div id="food-results" class="results"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Meal carbs</p>
+              <h3>Selected foods</h3>
+            </div>
+
+            <div id="selected-food-list" class="selected-list"></div>
+            <div class="total-strip">
+              <span>Total carbs from selected foods</span>
+              <strong id="selected-carb-total">0 g</strong>
+            </div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="logbook">
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Blood sugar log</p>
+              <h2>Record up to 90 days of readings and share them with your doctor.</h2>
+            </div>
+
+            <form id="log-form" class="field-grid">
+              <label>
+                Date
+                <input id="log-date" type="date" />
+              </label>
+
+              <label>
+                Time
+                <input id="log-time" type="time" />
+              </label>
+
+              <label>
+                Blood sugar (mg/dL)
+                <input id="log-bg" type="number" min="20" max="600" step="1" />
+              </label>
+
+              <label>
+                Context
+                <select id="log-context">
+                  <option value="Pre-meal">Pre-meal</option>
+                  <option value="Post-meal">Post-meal</option>
+                  <option value="Bedtime">Bedtime</option>
+                  <option value="Exercise">Exercise</option>
+                  <option value="Overnight">Overnight</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
+
+              <label class="field-span">
+                Notes
+                <input id="log-notes" type="text" maxlength="120" placeholder="Optional note for your doctor" />
+              </label>
+            </form>
+
+            <div class="action-row">
+              <button id="save-log-entry" type="button">Save reading</button>
+              <button id="export-csv" type="button" class="secondary-button">Export CSV</button>
+              <button id="share-chart" type="button" class="secondary-button">Share chart with provider</button>
+              <button id="clear-logbook" type="button" class="ghost-button">Clear logbook</button>
+            </div>
+
+            <div id="log-status" class="status-text" aria-live="polite"></div>
+          </article>
+
+          <article class="panel chart-panel">
+            <div class="panel-heading">
+              <p class="section-kicker">90-day trend</p>
+              <h3>Blood sugar graph</h3>
+            </div>
+
+            <div class="chart-summary">
+              <div class="stat-card">
+                <span>Entries in range</span>
+                <strong id="log-count">0</strong>
+              </div>
+              <div class="stat-card">
+                <span>Average glucose</span>
+                <strong id="avg-bg">0 mg/dL</strong>
+              </div>
+              <div class="stat-card">
+                <span>Most recent</span>
+                <strong id="latest-bg">No reading</strong>
+              </div>
+            </div>
+
+            <div class="chart-frame">
+              <svg id="bg-chart" viewBox="0 0 640 260" role="img" aria-label="Blood sugar trend chart"></svg>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Recent readings</p>
+              <h3>Logbook entries</h3>
+            </div>
+
+            <div id="log-entries" class="log-list"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="wearables">
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Wearable monitoring</p>
+              <h2>Track smartwatch and smartring-style vitals with a compatibility layer.</h2>
+            </div>
+
+            <form id="wearable-form" class="field-grid">
+              <label>
+                Wearable type
+                <select id="wearable-type">
+                  <option value="apple-watch">Apple Watch style</option>
+                  <option value="wear-os">Wear OS watch</option>
+                  <option value="smart-ring">Smart ring</option>
+                  <option value="fitness-band">Fitness band</option>
+                  <option value="generic">Generic Bluetooth wearable</option>
+                </select>
+              </label>
+
+              <label>
+                Sync mode
+                <select id="wearable-sync-mode">
+                  <option value="manual">Manual sync</option>
+                  <option value="bridge">Bridge API prototype</option>
+                </select>
+              </label>
+
+              <label>
+                Heart rate (bpm)
+                <input id="wearable-heart-rate" type="number" min="20" max="240" step="1" />
+              </label>
+
+              <label>
+                Oxygen saturation (%)
+                <input id="wearable-spo2" type="number" min="50" max="100" step="1" />
+              </label>
+
+              <label>
+                Systolic blood pressure
+                <input id="wearable-systolic" type="number" min="50" max="260" step="1" />
+              </label>
+
+              <label>
+                Diastolic blood pressure
+                <input id="wearable-diastolic" type="number" min="30" max="180" step="1" />
+              </label>
+
+              <label>
+                Skin temperature (F)
+                <input id="wearable-temperature" type="number" min="85" max="110" step="0.1" />
+              </label>
+
+              <label>
+                Responsiveness check
+                <select id="wearable-responsiveness">
+                  <option value="responsive">Responsive</option>
+                  <option value="unknown">Unknown</option>
+                  <option value="unresponsive">Unresponsive</option>
+                </select>
+              </label>
+
+              <label class="checkbox-field">
+                <input id="wearable-fall-detected" type="checkbox" />
+                Fall or sudden motion event detected
+              </label>
+            </form>
+
+            <div class="action-row">
+              <button id="save-wearable-reading" type="button">Save wearable reading</button>
+              <button id="run-emergency-check" type="button" class="secondary-button">Run emergency check</button>
+            </div>
+
+            <div id="wearable-status" class="status-text" aria-live="polite"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Emergency contact</p>
+              <h3>Notify a trusted person if readings suggest unconsciousness</h3>
+            </div>
+
+            <form id="emergency-contact-form" class="field-grid">
+              <label>
+                Contact name
+                <input id="emergency-contact-name" type="text" />
+              </label>
+
+              <label>
+                Relationship
+                <input id="emergency-contact-relationship" type="text" placeholder="Parent, spouse, roommate..." />
+              </label>
+
+              <label>
+                Phone
+                <input id="emergency-contact-phone" type="tel" />
+              </label>
+
+              <label>
+                Email
+                <input id="emergency-contact-email" type="email" />
+              </label>
+
+              <label>
+                Preferred notification method
+                <select id="emergency-contact-method">
+                  <option value="sms">SMS-style alert</option>
+                  <option value="email">Email-style alert</option>
+                </select>
+              </label>
+            </form>
+
+            <div class="action-row">
+              <button id="save-emergency-contact" type="button">Save contact</button>
+            </div>
+
+            <div id="emergency-contact-status" class="status-text" aria-live="polite"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Safety engine</p>
+              <h3>Prototype unconsciousness risk criteria</h3>
+            </div>
+
+            <div class="warning-list">
+              <div class="warning-card">Emergency alerts are triggered by combinations such as unresponsiveness, low oxygen, extreme blood pressure, very low or very high heart rate, or a fall plus abnormal vitals.</div>
+              <div class="warning-card">This is a prototype compatibility layer, not a certified medical detection algorithm and not a substitute for calling emergency services.</div>
+            </div>
+
+            <div id="wearable-alert-output" class="recommendation-list"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="care">
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Quarterly care</p>
+              <h2>Keep blood work reminders visible and up to date.</h2>
+            </div>
+
+            <form class="field-grid">
+              <label>
+                Last blood work date
+                <input id="last-bloodwork-date" type="date" />
+              </label>
+
+              <label>
+                Reminder cadence
+                <select id="bloodwork-frequency">
+                  <option value="90" selected>Every 90 days</option>
+                  <option value="120">Every 120 days</option>
+                </select>
+              </label>
+            </form>
+
+            <div class="care-card">
+              <p class="section-kicker">Next reminder</p>
+              <strong id="next-bloodwork-date">Add your last lab date</strong>
+              <p id="bloodwork-message" class="panel-copy">
+                This reminder is for planning and does not replace your clinician's instructions.
+              </p>
+            </div>
+          </article>
+
+          <article id="patient-recommendations-panel" class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">From your clinician</p>
+              <h3>Recommendations</h3>
+            </div>
+
+            <div id="patient-recommendations" class="recommendation-list"></div>
+          </article>
+
+          <article id="messages-panel" class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Secure messages</p>
+              <h3>Patient and provider thread</h3>
+            </div>
+            <form id="message-form" class="field-grid">
+              <label id="message-recipient-field">
+                Recipient
+                <select id="message-recipient"></select>
+              </label>
+              <label class="field-span">
+                Message
+                <textarea id="message-text" rows="4" maxlength="600"></textarea>
+              </label>
+              <button type="submit">Send message</button>
+            </form>
+            <div id="message-status" class="status-text" aria-live="polite"></div>
+            <div id="message-list" class="recommendation-list"></div>
+          </article>
+
+          <article id="provider-panel" class="panel is-hidden">
+            <div class="panel-heading">
+              <p class="section-kicker">Provider workspace</p>
+              <h3>Send recommendations to linked patients</h3>
+            </div>
+
+            <form id="provider-recommendation-form" class="field-grid">
+              <label>
+                Linked patient
+                <select id="provider-patient-select"></select>
+              </label>
+
+              <label>
+                Recommendation title
+                <input id="provider-recommendation-title" type="text" maxlength="80" />
+              </label>
+
+              <label class="field-span">
+                Recommendation
+                <textarea id="provider-recommendation-message" rows="5" maxlength="800"></textarea>
+              </label>
+
+              <button type="submit">Send recommendation</button>
+            </form>
+
+            <div id="provider-status" class="status-text" aria-live="polite"></div>
+            <div id="linked-patients" class="recommendation-list"></div>
+          </article>
+
+          <article id="provider-shared-charts-panel" class="panel is-hidden">
+            <div class="panel-heading">
+              <p class="section-kicker">Shared chart snapshots</p>
+              <h3>Patient uploads for clinician review</h3>
+            </div>
+            <div id="shared-chart-list" class="recommendation-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Safety notes</p>
+              <h3>Use caution with any bolus/fast acting estimate</h3>
+            </div>
+
+            <div class="warning-list">
+              <div class="warning-card">Do not rely on this app alone for severe highs, lows, ketones, vomiting, illness, or pump or CGM alarms.</div>
+              <div class="warning-card">Insulin on board logic differs by person and device. Confirm with your care team how much correction insulin should be subtracted.</div>
+              <div class="warning-card">This prototype is not a production HIPAA deployment and would need secure hosting, audit logging, encryption, and legal review before real clinical use.</div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+    <script src="/wearables.js"></script>
+  </body>
+</html>
