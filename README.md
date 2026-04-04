@@ -29,7 +29,7 @@ It also includes a food search tool powered by USDA FoodData Central so users ca
 - patient chart snapshot sharing so clinicians can review uploaded trends
 - smartwatch and smartring compatibility screen for manual or bridge-style vital sync
 - wearable monitoring inputs for heart rate, oxygen saturation, blood pressure, temperature, falls, and responsiveness
-- emergency contact settings with prototype alert recording when readings suggest unconsciousness
+- emergency contact settings with real provider delivery support for SMS and email alerts when configured
 
 ## Important safety note
 
@@ -68,18 +68,32 @@ $env:PGSSLMODE="require"
 
 The schema for the production database is in `db/schema.sql`.
 
-## Password reset email setup
+## Password reset and emergency alert provider setup
 
-Configure these environment variables to send real reset links:
+Configure these environment variables to send real reset links and emergency notifications:
 
 ```powershell
 $env:APP_BASE_URL="https://your-production-domain.example"
-$env:NOTIFICATION_PROVIDER="resend"
-$env:NOTIFICATION_API_KEY="your_resend_api_key"
+$env:EMAIL_PROVIDER="resend"
+$env:EMAIL_API_KEY="your_resend_api_key"
 $env:EMAIL_FROM="Bolus/Fast Acting Compass <no-reply@your-domain.example>"
+$env:SMS_PROVIDER="twilio"
+$env:TWILIO_ACCOUNT_SID="your_twilio_sid"
+$env:TWILIO_AUTH_TOKEN="your_twilio_auth_token"
+$env:TWILIO_FROM_NUMBER="+15551234567"
 ```
 
-Without those values, the app still generates reset links for local development, but email delivery stays disabled.
+Without those values, the app still generates reset links for local development, but real email and SMS delivery stay disabled.
+
+## Database schema
+
+Apply the production schema with:
+
+```powershell
+$env:DATABASE_URL="postgres://..."
+$env:PGSSLMODE="require"
+node scripts/run-schema.js
+```
 
 ## USDA API key
 

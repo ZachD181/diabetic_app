@@ -25,10 +25,11 @@ This repository is now deployable as a live preview and has baseline security ha
    Examples:
    - Twilio for SMS
    - Resend or SendGrid for email
+   Current code now supports:
+   - Resend for password reset and email alerts
+   - Twilio for SMS emergency alerts
 
-3. Replace prototype password reset with email-delivered signed reset links.
-
-4. Add audit logging.
+3. Add audit logging.
    Minimum events:
    - login
    - logout
@@ -38,19 +39,19 @@ This repository is now deployable as a live preview and has baseline security ha
    - chart sharing
    - message send
 
-5. Add authorization tests and API integration tests.
+4. Add authorization tests and API integration tests.
 
-6. Add rate limiting and abuse protection at the API layer.
+5. Add rate limiting and abuse protection at the API layer.
 
-7. Add real wearable vendor integrations instead of manual compatibility inputs.
+6. Add real wearable vendor integrations instead of manual compatibility inputs.
    Examples:
    - Apple Health / HealthKit bridge
    - Google Health Connect bridge
    - Oura / ring vendor API integrations where permitted
 
-8. Complete legal, privacy, and compliance review before handling real patient data.
+7. Complete legal, privacy, and compliance review before handling real patient data.
    This includes HIPAA, BAA coverage, breach response, retention policy, and access review.
 
 ## Recommended next build step
 
-Deploy with a real `DATABASE_URL`, run the schema in `db/schema.sql`, and then replace prototype notifications with a real provider.
+Deploy with a real `DATABASE_URL`, run the schema in `db/schema.sql`, and configure real provider secrets for Resend and Twilio.

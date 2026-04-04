@@ -1,14 +1,12 @@
 const crypto = require("crypto");
 const { createRepository } = require("../lib/repository");
+const { sendEmail, sendSms } = require("../lib/notifications");
 
 const API_KEY = process.env.FOODDATA_API_KEY || "DEMO_KEY";
 const SESSION_COOKIE = "bolus_compass_session";
 const SESSION_MAX_AGE = Number(process.env.SESSION_MAX_AGE_SECONDS || 2592000);
 const APP_BASE_URL = String(process.env.APP_BASE_URL || "http://localhost:3000").replace(/\/$/, "");
 const RESET_TOKEN_TTL_MS = Number(process.env.RESET_TOKEN_TTL_MINUTES || 30) * 60 * 1000;
-const EMAIL_PROVIDER = String(process.env.NOTIFICATION_PROVIDER || "").trim().toLowerCase();
-const EMAIL_API_KEY = String(process.env.NOTIFICATION_API_KEY || "").trim();
-const EMAIL_FROM = String(process.env.EMAIL_FROM || "").trim();
 const COOKIE_SECURE =
   process.env.SESSION_COOKIE_SECURE === "true" ||
   process.env.NODE_ENV === "production" ||
@@ -101,28 +99,75 @@ function buildResetLink(email, token) {
 }
 
 async function sendResetEmail({ to, name, resetLink }) {
-  if (EMAIL_PROVIDER !== "resend" || !EMAIL_API_KEY || !EMAIL_FROM) return false;
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${EMAIL_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: EMAIL_FROM,
-      to: [to],
-      subject: "Reset your Bolus/Fast Acting Compass password",
-      text: [
-        `Hi ${name || "there"},`,
-        "",
-        "We received a request to reset your password.",
-        `Use this secure link to choose a new password: ${resetLink}`,
-        "",
-        "If you did not request this change, you can ignore this email.",
-      ].join("\n"),
-    }),
+  return sendEmail({
+    to,
+    subject: "Reset your Bolus/Fast Acting Compass password",
+    text: [
+      `Hi ${name || "there"},`,
+      "",
+      "We received a request to reset your password.",
+      `Use this secure link to choose a new password: ${resetLink}`,
+      "",
+      "If you did not request this change, you can ignore this email.",
+    ].join("\n"),
   });
-  return response.ok;
+}
+
+function buildEmergencyMessage({ user, contact, reason, metrics }) {
+  const readableMetrics = Object.entries(metrics || {})
+    .filter(([, value]) => value !== null && value !== undefined && value !== "")
+    .map(([key, value]) => `${key}: ${value}`)
+    .join(", ");
+  return [
+    `Emergency check triggered for ${user.name || "a user"} in Bolus/Fast Acting Compass.`,
+    `Reason: ${reason}.`,
+    readableMetrics ? `Metrics: ${readableMetrics}.` : "",
+    "Please attempt to reach them and contact emergency services if needed.",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+async function notifyEmergencyContact({ user, contact, reason, metrics }) {
+  if (!contact) {
+    return {
+      delivered: false,
+      status: "no_contact_on_file",
+      provider: "none",
+      detail: "No emergency contact is on file.",
+    };
+  }
+
+  const message = buildEmergencyMessage({ user, contact, reason, metrics });
+  if (contact.notificationMethod === "email" && contact.email) {
+    return sendEmail({
+      to: contact.email,
+      subject: `Emergency alert for ${user.name || "user"}`,
+      text: message,
+    });
+  }
+
+  if (contact.phone) {
+    return sendSms({
+      to: contact.phone,
+      body: message,
+    });
+  }
+
+  if (contact.email) {
+    return sendEmail({
+      to: contact.email,
+      subject: `Emergency alert for ${user.name || "user"}`,
+      text: message,
+    });
+  }
+
+  return {
+    delivered: false,
+    status: "contact_missing_destination",
+    provider: "none",
+    detail: "Emergency contact is missing a valid destination.",
+  };
 }
 
 async function getCurrentUser(req) {
@@ -250,14 +295,18 @@ async function handleRequestPasswordReset(req, res) {
     createdAt: new Date().toISOString(),
   };
   await repository.replaceResetToken(token);
-  const emailSent = await sendResetEmail({ to: email, name: user.name, resetLink }).catch(() => false);
+  const emailResult = await sendResetEmail({ to: email, name: user.name, resetLink }).catch((error) => ({
+    delivered: false,
+    status: "email_failed",
+    detail: error instanceof Error ? error.message : String(error),
+  }));
   const payload = {
     ok: true,
-    message: emailSent
+    message: emailResult.delivered
       ? "If that email exists, a password reset link has been sent."
-      : "Password reset is configured, but email delivery is not active yet. Set NOTIFICATION_PROVIDER=resend, NOTIFICATION_API_KEY, EMAIL_FROM, and APP_BASE_URL to send reset emails.",
+      : "Password reset is configured, but email delivery is not active yet. Set EMAIL_PROVIDER=resend, EMAIL_API_KEY, EMAIL_FROM, and APP_BASE_URL to send reset emails.",
   };
-  if (!emailSent && !COOKIE_SECURE) payload.resetLink = resetLink;
+  if (!emailResult.delivered && !COOKIE_SECURE) payload.resetLink = resetLink;
   sendJson(res, 200, payload);
 }
 
@@ -388,8 +437,33 @@ async function handleCreateEmergencyAlert(req, res) {
   const contact = await repository.getEmergencyContact(user.id);
   if (!reason) return sendJson(res, 400, { error: "Alert reason is required." });
   const provider = user.role === "patient" ? await findLinkedProvider(user) : null;
-  const alert = await repository.createEmergencyAlert({ id: crypto.randomUUID(), userId: user.id, providerId: provider ? provider.id : null, contactId: contact ? contact.id : null, contactName: contact ? contact.name : "", notificationMethod: contact ? contact.notificationMethod : "", reason, metrics, createdAt: new Date().toISOString(), status: contact ? "prototype_notified" : "no_contact_on_file" });
-  sendJson(res, 201, { alert, message: contact ? "Prototype alert recorded for your emergency contact." : "No emergency contact is on file, so only the local alert was recorded." });
+  const notification = await notifyEmergencyContact({ user, contact, reason, metrics }).catch((error) => ({
+    delivered: false,
+    status: "notification_failed",
+    provider: "unknown",
+    detail: error instanceof Error ? error.message : String(error),
+  }));
+  const alert = await repository.createEmergencyAlert({
+    id: crypto.randomUUID(),
+    userId: user.id,
+    providerId: provider ? provider.id : null,
+    contactId: contact ? contact.id : null,
+    contactName: contact ? contact.name : "",
+    notificationMethod: contact ? contact.notificationMethod : "",
+    reason,
+    metrics,
+    createdAt: new Date().toISOString(),
+    status: notification.status,
+  });
+  sendJson(res, 201, {
+    alert,
+    notification,
+    message: notification.delivered
+      ? "Emergency contact notified."
+      : contact
+        ? "Emergency alert was recorded, but delivery was not completed. Check provider configuration."
+        : "No emergency contact is on file, so only the alert record was created.",
+  });
 }
 
 module.exports = async (req, res) => {

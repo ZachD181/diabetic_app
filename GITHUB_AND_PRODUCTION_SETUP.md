@@ -41,9 +41,14 @@ DATABASE_URL=your_managed_postgres_connection_string
 PGSSLMODE=require
 SESSION_MAX_AGE_SECONDS=2592000
 SESSION_COOKIE_SECURE=true
-APP_BASE_URL=https://your-production-domain.example
-NOTIFICATION_PROVIDER=twilio_or_resend
-NOTIFICATION_API_KEY=your_provider_secret
+APP_BASE_URL=https://www.insulindaily.com
+EMAIL_PROVIDER=resend
+EMAIL_API_KEY=your_resend_api_key
+EMAIL_FROM=Bolus/Fast Acting Compass <no-reply@insulindaily.com>
+SMS_PROVIDER=twilio
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_FROM_NUMBER=your_twilio_from_number
 ```
 
 ## 4. Database setup
@@ -51,6 +56,14 @@ NOTIFICATION_API_KEY=your_provider_secret
 Run the schema in:
 
 `db/schema.sql`
+
+You can apply it with:
+
+```powershell
+$env:DATABASE_URL="postgres://..."
+$env:PGSSLMODE="require"
+node scripts/run-schema.js
+```
 
 That creates the tables for:
 
@@ -70,8 +83,8 @@ That creates the tables for:
 3. Add the Vercel environment variables
 4. Redeploy
 5. Verify `/api/session` returns `"serverMode":"postgres"`
-6. Replace prototype notifications with real provider calls
-7. Replace prototype password reset with emailed reset links
+6. Verify emergency alert delivery with Twilio and Resend credentials
+7. Verify password reset emails from the production domain
 8. Add audit logging and rate limiting
 
 ## 6. Important note
