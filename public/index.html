@@ -86,27 +86,26 @@
         <article class="panel auth-panel">
           <div class="panel-heading">
             <p class="section-kicker">Reset password</p>
-            <h2>Prototype reset flow</h2>
+            <h2 id="reset-heading">Send a secure reset link</h2>
           </div>
+          <p id="reset-request-copy" class="panel-copy">
+            Enter your account email and we will send a password reset link when email delivery is configured.
+          </p>
           <form id="request-reset-form" class="field-grid auth-grid">
             <label>
               Account email
               <input id="reset-email" type="email" autocomplete="email" />
             </label>
-            <button type="submit">Get reset code</button>
+            <button type="submit">Send reset link</button>
           </form>
-          <form id="confirm-reset-form" class="field-grid auth-grid">
-            <label>
-              Reset code
-              <input id="reset-code" type="text" />
-            </label>
+          <form id="confirm-reset-form" class="field-grid auth-grid is-hidden">
             <label>
               New password
               <input id="reset-new-password" type="password" autocomplete="new-password" />
             </label>
             <button type="submit">Set new password</button>
           </form>
-          <p class="panel-copy">This local prototype shows the reset code in-app because no email service is configured.</p>
+          <p id="reset-confirm-copy" class="panel-copy is-hidden">Choose a new password for the account linked to this secure reset email.</p>
         </article>
       </section>
 

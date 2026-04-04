@@ -24,7 +24,7 @@ It also includes a food search tool powered by USDA FoodData Central so users ca
 - patient registration field for linking a PCP or clinic email
 - clinician recommendation inbox for patients
 - provider dashboard for sending recommendations to linked patients
-- prototype password reset flow with in-app reset code display
+- password reset flow with secure emailed reset links when provider env vars are configured
 - patient-to-provider messaging thread for linked accounts
 - patient chart snapshot sharing so clinicians can review uploaded trends
 - smartwatch and smartring compatibility screen for manual or bridge-style vital sync
@@ -67,6 +67,19 @@ $env:PGSSLMODE="require"
 ```
 
 The schema for the production database is in `db/schema.sql`.
+
+## Password reset email setup
+
+Configure these environment variables to send real reset links:
+
+```powershell
+$env:APP_BASE_URL="https://your-production-domain.example"
+$env:NOTIFICATION_PROVIDER="resend"
+$env:NOTIFICATION_API_KEY="your_resend_api_key"
+$env:EMAIL_FROM="Bolus/Fast Acting Compass <no-reply@your-domain.example>"
+```
+
+Without those values, the app still generates reset links for local development, but email delivery stays disabled.
 
 ## USDA API key
 

@@ -4,6 +4,11 @@ const { createRepository } = require("../lib/repository");
 const API_KEY = process.env.FOODDATA_API_KEY || "DEMO_KEY";
 const SESSION_COOKIE = "bolus_compass_session";
 const SESSION_MAX_AGE = Number(process.env.SESSION_MAX_AGE_SECONDS || 2592000);
+const APP_BASE_URL = String(process.env.APP_BASE_URL || "http://localhost:3000").replace(/\/$/, "");
+const RESET_TOKEN_TTL_MS = Number(process.env.RESET_TOKEN_TTL_MINUTES || 30) * 60 * 1000;
+const EMAIL_PROVIDER = String(process.env.NOTIFICATION_PROVIDER || "").trim().toLowerCase();
+const EMAIL_API_KEY = String(process.env.NOTIFICATION_API_KEY || "").trim();
+const EMAIL_FROM = String(process.env.EMAIL_FROM || "").trim();
 const COOKIE_SECURE =
   process.env.SESSION_COOKIE_SECURE === "true" ||
   process.env.NODE_ENV === "production" ||
@@ -58,6 +63,10 @@ function normalizeEmail(email) {
   return String(email || "").trim().toLowerCase();
 }
 
+function createResetTokenHash(token) {
+  return crypto.createHash("sha256").update(String(token)).digest("hex");
+}
+
 function createPasswordHash(password) {
   const salt = crypto.randomBytes(16).toString("hex");
   const hash = crypto.scryptSync(password, salt, 64).toString("hex");
@@ -81,6 +90,39 @@ function sanitizeUser(user = {}) {
     clinicCode: user.clinicCode || "",
     createdAt: user.createdAt,
   };
+}
+
+function buildResetLink(email, token) {
+  const url = new URL(APP_BASE_URL);
+  url.searchParams.set("reset", "1");
+  url.searchParams.set("email", email);
+  url.searchParams.set("token", token);
+  return url.toString();
+}
+
+async function sendResetEmail({ to, name, resetLink }) {
+  if (EMAIL_PROVIDER !== "resend" || !EMAIL_API_KEY || !EMAIL_FROM) return false;
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${EMAIL_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: EMAIL_FROM,
+      to: [to],
+      subject: "Reset your Bolus/Fast Acting Compass password",
+      text: [
+        `Hi ${name || "there"},`,
+        "",
+        "We received a request to reset your password.",
+        `Use this secure link to choose a new password: ${resetLink}`,
+        "",
+        "If you did not request this change, you can ignore this email.",
+      ].join("\n"),
+    }),
+  });
+  return response.ok;
 }
 
 async function getCurrentUser(req) {
@@ -195,26 +237,41 @@ async function handleRequestPasswordReset(req, res) {
   const body = await readBody(req);
   const email = normalizeEmail(body.email);
   const user = await repository.getUserByEmail(email);
-  if (!user) return sendJson(res, 200, { ok: true, message: "If that email exists, a reset code has been prepared." });
+  if (!user) return sendJson(res, 200, { ok: true, message: "If that email exists, a password reset link has been sent." });
+  const rawToken = crypto.randomBytes(32).toString("hex");
+  const resetLink = buildResetLink(email, rawToken);
   const token = {
     id: crypto.randomUUID(),
     userId: user.id,
     email,
-    code: crypto.randomBytes(4).toString("hex").toUpperCase(),
-    expiresAt: new Date(Date.now() + 900000).toISOString(),
+    code: "",
+    tokenHash: createResetTokenHash(rawToken),
+    expiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS).toISOString(),
     createdAt: new Date().toISOString(),
   };
   await repository.replaceResetToken(token);
-  sendJson(res, 200, { ok: true, resetCode: token.code, message: "Prototype mode: use this reset code in the form below." });
+  const emailSent = await sendResetEmail({ to: email, name: user.name, resetLink }).catch(() => false);
+  const payload = {
+    ok: true,
+    message: emailSent
+      ? "If that email exists, a password reset link has been sent."
+      : "Password reset is configured, but email delivery is not active yet. Set NOTIFICATION_PROVIDER=resend, NOTIFICATION_API_KEY, EMAIL_FROM, and APP_BASE_URL to send reset emails.",
+  };
+  if (!emailSent && !COOKIE_SECURE) payload.resetLink = resetLink;
+  sendJson(res, 200, payload);
 }
 
 async function handleConfirmPasswordReset(req, res) {
   const body = await readBody(req);
   const email = normalizeEmail(body.email);
+  const resetToken = String(body.token || "").trim();
   const code = String(body.code || "").trim().toUpperCase();
   const newPassword = String(body.newPassword || "");
-  const token = await repository.getValidResetToken(email, code, new Date().toISOString());
-  if (!token || newPassword.length < 8) return sendJson(res, 400, { error: "Enter a valid reset code and a new password with at least 8 characters." });
+  const nowIso = new Date().toISOString();
+  const token =
+    (resetToken ? await repository.getValidResetTokenByHash(email, createResetTokenHash(resetToken), nowIso) : null) ||
+    (code ? await repository.getValidResetTokenByCode(email, code, nowIso) : null);
+  if (!token || newPassword.length < 8) return sendJson(res, 400, { error: "Enter a valid reset link and a new password with at least 8 characters." });
   await repository.updateUserPassword(token.user_id || token.userId, createPasswordHash(newPassword));
   await repository.deleteResetToken(token.id);
   sendJson(res, 200, { ok: true, message: "Password reset complete. You can log in now." });

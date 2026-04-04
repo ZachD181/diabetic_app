@@ -28,9 +28,12 @@ create table if not exists reset_tokens (
   user_id uuid not null references users(id) on delete cascade,
   email text not null,
   code text not null,
+  token_hash text,
   expires_at timestamptz not null,
   created_at timestamptz not null default now()
 );
+
+alter table reset_tokens add column if not exists token_hash text;
 
 create index if not exists idx_reset_tokens_email on reset_tokens(email);
 create index if not exists idx_reset_tokens_user_id on reset_tokens(user_id);
