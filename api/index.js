@@ -271,7 +271,8 @@ async function handleLogin(req, res) {
   const email = normalizeEmail(body.email);
   const password = String(body.password || "");
   const user = await repository.getUserByEmail(email);
-  if (!user || !verifyPassword(password, user.passwordHash)) return sendJson(res, 401, { error: "Invalid email or password." });
+  if (!user) return sendJson(res, 404, { error: "No account was found for that email address." });
+  if (!verifyPassword(password, user.passwordHash)) return sendJson(res, 401, { error: "Incorrect password. Please try again." });
   const token = crypto.randomUUID();
   await repository.createSession(token, user.id, new Date().toISOString());
   setSessionCookie(res, token);

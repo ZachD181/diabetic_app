@@ -29,6 +29,17 @@
   const nowIso=()=>new Date().toISOString();
   const localKey=suffix=>app.storageKey(`wearable:${suffix}`);
   const fmt=(value,suffix="")=>value!==null&&value!==undefined&&value!==""?`${value}${suffix}`:"Not set";
+  const defaultUsPrefix="+1";
+
+  function normalizePhoneNumber(value){
+    const raw=String(value||"").trim();
+    if(!raw) return defaultUsPrefix;
+    if(raw.startsWith("+")) return raw;
+    const digits=raw.replace(/\D/g,"");
+    if(digits.length===10) return `+1${digits}`;
+    if(digits.length===11&&digits.startsWith("1")) return `+${digits}`;
+    return raw;
+  }
 
   function loadLocal(){
     try{localState.readings=JSON.parse(localStorage.getItem(localKey("readings"))||"[]")}catch{localState.readings=[]}
@@ -61,7 +72,7 @@
   function populateContact(contact){
     elements.emergencyContactName.value=contact?.name||"";
     elements.emergencyContactRelationship.value=contact?.relationship||"";
-    elements.emergencyContactPhone.value=contact?.phone||"";
+    elements.emergencyContactPhone.value=contact?.phone||defaultUsPrefix;
     elements.emergencyContactEmail.value=contact?.email||"";
     elements.emergencyContactMethod.value=contact?.notificationMethod||"sms";
   }
@@ -132,10 +143,11 @@
     const contact={
       name:elements.emergencyContactName.value.trim(),
       relationship:elements.emergencyContactRelationship.value.trim(),
-      phone:elements.emergencyContactPhone.value.trim(),
+      phone:normalizePhoneNumber(elements.emergencyContactPhone.value),
       email:elements.emergencyContactEmail.value.trim(),
       notificationMethod:elements.emergencyContactMethod.value,
     };
+    elements.emergencyContactPhone.value=contact.phone;
     if(!contact.name||!contact.relationship||(!contact.phone&&!contact.email)){
       elements.emergencyContactStatus.textContent="Enter a name, relationship, and at least one phone or email.";
       return;
@@ -197,6 +209,12 @@
     syncEmergencyContactFromServer();
   }
 
+  elements.emergencyContactPhone.addEventListener("focus",()=>{
+    if(!elements.emergencyContactPhone.value.trim()) elements.emergencyContactPhone.value=defaultUsPrefix;
+  });
+  elements.emergencyContactPhone.addEventListener("blur",()=>{
+    elements.emergencyContactPhone.value=normalizePhoneNumber(elements.emergencyContactPhone.value);
+  });
   elements.saveEmergencyContact.addEventListener("click",saveEmergencyContact);
   elements.saveWearableReading.addEventListener("click",saveWearableReading);
   elements.runEmergencyCheck.addEventListener("click",runEmergencyCheck);
