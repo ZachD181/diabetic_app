@@ -463,7 +463,7 @@ async function handleCreateEmergencyAlert(req, res) {
     message: notification.delivered
       ? "Emergency contact notified."
       : contact
-        ? "Emergency alert was recorded, but delivery was not completed. Check provider configuration."
+        ? `Emergency alert was recorded, but delivery was not completed. ${notification.detail || "Check provider configuration."}`
         : "No emergency contact is on file, so only the alert record was created.",
   });
 }
