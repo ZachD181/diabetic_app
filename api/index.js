@@ -413,13 +413,14 @@ async function handleSaveEmergencyContact(req, res) {
   const user = await requireUser(req, res);
   if (!user) return;
   const body = await readBody(req);
+  const existingContact = await repository.getEmergencyContact(user.id);
   const name = String(body.name || "").trim();
   const relationship = String(body.relationship || "").trim();
   const phone = String(body.phone || "").trim();
   const email = normalizeEmail(body.email);
   const notificationMethod = String(body.notificationMethod || "sms").trim().toLowerCase();
   if (!name || !relationship || (!phone && !email)) return sendJson(res, 400, { error: "Enter a contact name, relationship, and at least one phone or email." });
-  sendJson(res, 200, { contact: await repository.upsertEmergencyContact({ id: crypto.randomUUID(), userId: user.id, name, relationship, phone, email, notificationMethod: notificationMethod === "email" ? "email" : "sms", updatedAt: new Date().toISOString() }) });
+  sendJson(res, 200, { contact: await repository.upsertEmergencyContact({ id: existingContact?.id || crypto.randomUUID(), userId: user.id, name, relationship, phone, email, notificationMethod: notificationMethod === "email" ? "email" : "sms", updatedAt: new Date().toISOString() }) });
 }
 
 async function handleEmergencyAlerts(req, res) {
