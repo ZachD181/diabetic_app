@@ -87,6 +87,8 @@ Without those values, the app still generates reset links for local development,
 
 The live production deployment on `insulindaily.com` now expects provider credentials to be managed in Vercel environment variables so redeploys can pick up updated Resend or Twilio settings.
 
+Fresh pushes to the `main` branch trigger a new Vercel production deployment for the Insulin Daily app.
+
 ## Database schema
 
 Apply the production schema with:
