@@ -85,6 +85,8 @@ $env:TWILIO_FROM_NUMBER="+15551234567"
 
 Without those values, the app still generates reset links for local development, but real email and SMS delivery stay disabled.
 
+The live production deployment on `insulindaily.com` now expects provider credentials to be managed in Vercel environment variables so redeploys can pick up updated Resend or Twilio settings.
+
 ## Database schema
 
 Apply the production schema with:
