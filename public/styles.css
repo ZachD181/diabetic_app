@@ -104,6 +104,44 @@ textarea {
   gap: 14px;
 }
 
+.watch-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 0 12px;
+}
+
+.watch-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 28%),
+    var(--panel-soft);
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.watch-hero {
+  background:
+    radial-gradient(circle at top right, rgba(93, 214, 255, 0.14), transparent 38%),
+    var(--panel-strong);
+}
+
+.watch-card strong {
+  font-size: clamp(1.35rem, 5vw, 2.4rem);
+  line-height: 1;
+}
+
+.watch-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .eyebrow,
 .section-kicker {
   margin: 0 0 10px;
@@ -492,4 +530,80 @@ button {
     padding: 18px;
     border-radius: 24px;
   }
+
+  .watch-strip {
+    grid-template-columns: 1fr;
+    padding: 0 4px;
+  }
+}
+
+body.watch-mode {
+  background:
+    radial-gradient(circle at top, rgba(93, 214, 255, 0.18), transparent 26%),
+    linear-gradient(180deg, #03070f 0%, #07111f 100%);
+}
+
+body.watch-mode .auth-shell,
+body.watch-mode .app-shell {
+  width: min(100%, 420px);
+  padding: 10px 0 20px;
+}
+
+body.watch-mode .auth-hero,
+body.watch-mode .header-copy,
+body.watch-mode .linked-clinician,
+body.watch-mode .hero-chip-list,
+body.watch-mode .hero-panel::after,
+body.watch-mode .patientRecommendationsPanel {
+  display: none;
+}
+
+body.watch-mode .app-header {
+  padding: 10px 8px 8px;
+}
+
+body.watch-mode h1 {
+  font-size: 1.55rem;
+}
+
+body.watch-mode h2 {
+  font-size: 1.2rem;
+}
+
+body.watch-mode .panel,
+body.watch-mode .auth-panel,
+body.watch-mode .watch-card {
+  border-radius: 20px;
+  padding: 16px;
+}
+
+body.watch-mode .tab-bar {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0 4px;
+  gap: 8px;
+  top: 6px;
+}
+
+body.watch-mode .tab-button {
+  min-height: 46px;
+  font-size: 0.92rem;
+}
+
+body.watch-mode .field-grid,
+body.watch-mode .search-bar,
+body.watch-mode .action-row {
+  grid-template-columns: 1fr;
+}
+
+body.watch-mode .stats-grid,
+body.watch-mode .chart-summary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.watch-mode .watch-strip {
+  display: grid;
+}
+
+body.watch-mode textarea {
+  min-height: 110px;
 }

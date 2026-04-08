@@ -123,9 +123,28 @@
             <p id="user-greeting" class="header-copy"></p>
             <p id="linked-clinician" class="subtle-text"></p>
           </div>
+          <button id="watch-mode-toggle" type="button" class="secondary-button">Watch mode</button>
           <button id="logout-button" type="button" class="secondary-button">Logout</button>
         </div>
       </header>
+
+      <section id="watch-strip" class="watch-strip is-hidden" aria-label="Watch companion">
+        <article class="watch-card watch-hero">
+          <p class="section-kicker">Watch companion</p>
+          <strong id="watch-dose-total">0.0 units</strong>
+          <p id="watch-dose-caption" class="panel-copy">Compact dose guidance and emergency access for smartwatch-sized screens.</p>
+        </article>
+        <article class="watch-card">
+          <span class="watch-label">Latest glucose</span>
+          <strong id="watch-latest-bg">No reading</strong>
+          <button id="watch-open-logbook" type="button" class="ghost-button">Open logbook</button>
+        </article>
+        <article class="watch-card">
+          <span class="watch-label">Safety access</span>
+          <strong id="watch-emergency-state">Ready</strong>
+          <button id="watch-open-wearables" type="button" class="ghost-button">Emergency tools</button>
+        </article>
+      </section>
 
       <nav class="tab-bar" aria-label="Main sections">
         <button class="tab-button is-active" type="button" data-tab-target="dose">Dose</button>
