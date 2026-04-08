@@ -99,6 +99,23 @@ $env:PGSSLMODE="require"
 node scripts/run-schema.js
 ```
 
+## Mobile packaging
+
+This repo now includes Capacitor scaffolding for packaging the app as `Insulin Daily` on iPhone and Android.
+
+Key files:
+- [capacitor.config.json](C:\Users\zdekr\Desktop\codex_app\capacitor.config.json)
+- [MOBILE_APP_STORE_PLAN.md](C:\Users\zdekr\Desktop\codex_app\MOBILE_APP_STORE_PLAN.md)
+
+Core mobile commands:
+
+```powershell
+npm.cmd install
+npx cap add ios
+npx cap add android
+npm.cmd run mobile:sync
+```
+
 ## USDA API key
 
 Set `FOODDATA_API_KEY` if you have your own FoodData Central key:

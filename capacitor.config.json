@@ -1,0 +1,10 @@
+{
+  "appId": "com.insulindaily.app",
+  "appName": "Insulin Daily",
+  "webDir": "public",
+  "bundledWebRuntime": false,
+  "server": {
+    "hostname": "insulindaily.com",
+    "androidScheme": "https"
+  }
+}
