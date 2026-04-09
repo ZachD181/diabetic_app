@@ -4,7 +4,7 @@
   "webDir": "public",
   "bundledWebRuntime": false,
   "server": {
-    "hostname": "insulindaily.com",
-    "androidScheme": "https"
+    "url": "https://insulindaily.com",
+    "cleartext": false
   }
 }

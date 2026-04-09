@@ -89,6 +89,11 @@ The live production deployment on `insulindaily.com` now expects provider creden
 
 Fresh pushes to the `main` branch trigger a new Vercel production deployment for the Insulin Daily app.
 
+Store-facing support pages are available at:
+
+- [Privacy Policy](https://insulindaily.com/privacy.html)
+- [Support](https://insulindaily.com/support.html)
+
 ## Database schema
 
 Apply the production schema with:

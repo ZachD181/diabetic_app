@@ -474,6 +474,50 @@ button {
   border: 0;
 }
 
+.site-footer {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  padding: 16px 8px 6px;
+  color: var(--muted);
+}
+
+.site-footer a,
+.policy-panel a {
+  color: var(--accent-strong);
+  text-decoration: none;
+}
+
+.site-footer a:hover,
+.policy-panel a:hover {
+  text-decoration: underline;
+}
+
+.policy-body {
+  min-height: 100vh;
+}
+
+.policy-shell {
+  width: min(920px, calc(100% - 24px));
+  margin: 0 auto;
+  padding: 28px 0 36px;
+  display: grid;
+  gap: 16px;
+}
+
+.policy-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.policy-panel h2 {
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+}
+
+.policy-back-link {
+  margin: 4px 0 0;
+}
+
 @media (min-width: 980px) {
   .tab-panel[data-tab-panel="dose"] {
     grid-template-columns: 1.08fr 0.92fr;
@@ -534,6 +578,17 @@ button {
   .watch-strip {
     grid-template-columns: 1fr;
     padding: 0 4px;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .policy-shell {
+    width: min(100% - 14px, 920px);
+    padding-top: 14px;
   }
 }
 
