@@ -397,6 +397,50 @@
         <section class="tab-panel" data-tab-panel="wearables">
           <article class="panel">
             <div class="panel-heading">
+              <p class="section-kicker">Real wearable sync</p>
+              <h2>Choose the platform path you want this account to use.</h2>
+            </div>
+
+            <form id="wearable-integration-form" class="field-grid">
+              <label>
+                Preferred integration
+                <select id="wearable-platform">
+                  <option value="manual">Manual entry</option>
+                  <option value="health-connect">Android Health Connect</option>
+                  <option value="apple-health">Apple Health / Apple Watch</option>
+                  <option value="oura-cloud">Oura Cloud API</option>
+                  <option value="samsung-health">Samsung Health / Galaxy wearables</option>
+                </select>
+              </label>
+
+              <label>
+                Sync mode
+                <select id="wearable-platform-sync-mode">
+                  <option value="manual">Manual entry only</option>
+                  <option value="native-bridge">Native app bridge</option>
+                  <option value="cloud-api">Cloud API sync</option>
+                </select>
+              </label>
+
+              <label class="field-span">
+                Integration notes
+                <input id="wearable-platform-notes-input" type="text" maxlength="180" placeholder="Example: Build Android Health Connect first for Play Store release." />
+              </label>
+            </form>
+
+            <div class="action-row">
+              <button id="save-wearable-integration" type="button">Save sync profile</button>
+              <button id="connect-health-connect" type="button" class="secondary-button">Connect Health Connect</button>
+              <button id="sync-health-connect" type="button" class="secondary-button">Sync Health Connect vitals</button>
+              <button id="load-latest-synced-reading" type="button" class="secondary-button">Load latest synced reading</button>
+            </div>
+
+            <div id="wearable-integration-status" class="status-text" aria-live="polite"></div>
+            <div id="wearable-platform-notes" class="recommendation-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
               <p class="section-kicker">Wearable monitoring</p>
               <h2>Track smartwatch and smartring-style vitals with a compatibility layer.</h2>
             </div>

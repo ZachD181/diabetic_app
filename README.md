@@ -29,6 +29,9 @@ It also includes a food search tool powered by USDA FoodData Central so users ca
 - patient chart snapshot sharing so clinicians can review uploaded trends
 - smartwatch and smartring compatibility screen for manual or bridge-style vital sync
 - wearable monitoring inputs for heart rate, oxygen saturation, blood pressure, temperature, falls, and responsiveness
+- wearable integration profile support for Android Health Connect, Apple Health, Oura Cloud API, Samsung Health, and manual entry
+- server-backed wearable sample storage for signed-in accounts so future native or cloud sync paths have a real ingestion endpoint
+- native Android Health Connect bridge for heart rate, oxygen saturation, blood pressure, and skin temperature sync inside the Android app shell
 - emergency contact settings with real provider delivery support for SMS and email alerts when configured
 
 ## Important safety note

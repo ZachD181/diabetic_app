@@ -128,6 +128,41 @@ function buildEmergencyMessage({ user, contact, reason, metrics }) {
     .join(" ");
 }
 
+function getWearableSupportMatrix() {
+  return [
+    {
+      id: "health-connect",
+      label: "Android Health Connect",
+      worksToday: "Android native app path",
+      summary: "Best next real integration for the Android app. Supports vital record types through Android Health Connect once a native bridge is added.",
+    },
+    {
+      id: "apple-health",
+      label: "Apple Health / Apple Watch",
+      worksToday: "Requires native iPhone app",
+      summary: "Would need a native iOS build with HealthKit permissions before Apple Watch or Apple Health readings can sync automatically.",
+    },
+    {
+      id: "oura-cloud",
+      label: "Oura Cloud API",
+      worksToday: "Cloud integration path",
+      summary: "Can support ring-based sync through the Oura API and OAuth once provider credentials and user linking are added.",
+    },
+    {
+      id: "samsung-health",
+      label: "Samsung Health / Galaxy wearables",
+      worksToday: "Native Android integration path",
+      summary: "Can support Samsung device data through native Android integration, but some measurements remain restricted by platform policy.",
+    },
+    {
+      id: "manual",
+      label: "Manual entry",
+      worksToday: "Available now",
+      summary: "Lets users enter readings directly today while native or cloud integrations are being built.",
+    },
+  ];
+}
+
 async function notifyEmergencyContact({ user, contact, reason, metrics }) {
   if (!contact) {
     return {
@@ -430,6 +465,87 @@ async function handleEmergencyAlerts(req, res) {
   sendJson(res, 200, { alerts: await repository.getEmergencyAlertsForUser(user) });
 }
 
+async function handleWearableIntegrations(req, res) {
+  const user = await requireUser(req, res);
+  if (!user) return;
+  const integration = await repository.getWearableIntegration(user.id);
+  sendJson(res, 200, {
+    integration,
+    supportedPlatforms: getWearableSupportMatrix(),
+  });
+}
+
+async function handleSaveWearableIntegration(req, res) {
+  const user = await requireUser(req, res);
+  if (!user) return;
+  const body = await readBody(req);
+  const platform = String(body.platform || "manual").trim() || "manual";
+  const syncMode = String(body.syncMode || "manual").trim() || "manual";
+  const notes = String(body.notes || "").trim();
+  const supportedIds = new Set(getWearableSupportMatrix().map((item) => item.id));
+  if (!supportedIds.has(platform)) return sendJson(res, 400, { error: "Choose a supported wearable platform." });
+  sendJson(res, 200, {
+    integration: await repository.upsertWearableIntegration({
+      userId: user.id,
+      platform,
+      syncMode,
+      notes,
+      updatedAt: new Date().toISOString(),
+    }),
+    supportedPlatforms: getWearableSupportMatrix(),
+  });
+}
+
+function normalizeWearableReading(body = {}, fallbackPlatform = "manual") {
+  return {
+    sourcePlatform: String(body.sourcePlatform || body.type || fallbackPlatform || "manual").trim() || "manual",
+    syncMode: String(body.syncMode || "manual").trim() || "manual",
+    heartRate: Number(body.heartRate) || null,
+    spo2: Number(body.spo2) || null,
+    systolic: Number(body.systolic) || null,
+    diastolic: Number(body.diastolic) || null,
+    temperature: Number(body.temperature) || null,
+    responsiveness: String(body.responsiveness || "unknown").trim() || "unknown",
+    fallDetected: Boolean(body.fallDetected),
+    capturedAt: body.capturedAt ? new Date(body.capturedAt).toISOString() : new Date().toISOString(),
+  };
+}
+
+async function handleWearableReadings(req, res) {
+  const user = await requireUser(req, res);
+  if (!user) return;
+  const readings = await repository.getWearableReadingsForUser(user.id, 20);
+  sendJson(res, 200, { readings, latest: readings[0] || null });
+}
+
+async function handleCreateWearableReading(req, res) {
+  const user = await requireUser(req, res);
+  if (!user) return;
+  const integration = await repository.getWearableIntegration(user.id);
+  const body = await readBody(req);
+  const normalized = normalizeWearableReading(body, integration?.platform || "manual");
+  if (
+    ![
+      normalized.heartRate,
+      normalized.spo2,
+      normalized.systolic,
+      normalized.diastolic,
+      normalized.temperature,
+    ].some((value) => value !== null) &&
+    normalized.responsiveness === "unknown" &&
+    !normalized.fallDetected
+  ) {
+    return sendJson(res, 400, { error: "Enter at least one wearable metric or safety flag." });
+  }
+  const reading = await repository.createWearableReading({
+    id: crypto.randomUUID(),
+    userId: user.id,
+    ...normalized,
+    receivedAt: new Date().toISOString(),
+  });
+  sendJson(res, 201, { reading });
+}
+
 async function handleCreateEmergencyAlert(req, res) {
   const user = await requireUser(req, res);
   if (!user) return;
@@ -489,6 +605,10 @@ module.exports = async (req, res) => {
     if (req.method === "POST" && pathname === "/api/emergency-contacts") return handleSaveEmergencyContact(req, res);
     if (req.method === "GET" && pathname === "/api/emergency-alerts") return handleEmergencyAlerts(req, res);
     if (req.method === "POST" && pathname === "/api/emergency-alerts") return handleCreateEmergencyAlert(req, res);
+    if (req.method === "GET" && pathname === "/api/wearable-integrations") return handleWearableIntegrations(req, res);
+    if (req.method === "POST" && pathname === "/api/wearable-integrations") return handleSaveWearableIntegration(req, res);
+    if (req.method === "GET" && pathname === "/api/wearable-readings") return handleWearableReadings(req, res);
+    if (req.method === "POST" && pathname === "/api/wearable-readings") return handleCreateWearableReading(req, res);
     sendJson(res, 404, { error: "Not found." });
   } catch (error) {
     sendJson(res, 500, { error: "Unexpected server error.", details: error instanceof Error ? error.message : String(error) });

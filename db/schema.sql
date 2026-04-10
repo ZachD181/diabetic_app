@@ -104,3 +104,30 @@ create table if not exists emergency_alerts (
 create index if not exists idx_emergency_alerts_user_id on emergency_alerts(user_id);
 create index if not exists idx_emergency_alerts_provider_id on emergency_alerts(provider_id);
 create index if not exists idx_emergency_alerts_created_at on emergency_alerts(created_at);
+
+create table if not exists wearable_integrations (
+  user_id uuid primary key references users(id) on delete cascade,
+  platform text not null default 'manual',
+  sync_mode text not null default 'manual',
+  notes text not null default '',
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists wearable_readings (
+  id uuid primary key,
+  user_id uuid not null references users(id) on delete cascade,
+  source_platform text not null default 'manual',
+  sync_mode text not null default 'manual',
+  heart_rate numeric,
+  spo2 numeric,
+  systolic numeric,
+  diastolic numeric,
+  temperature numeric,
+  responsiveness text not null default 'unknown',
+  fall_detected boolean not null default false,
+  captured_at timestamptz not null default now(),
+  received_at timestamptz not null default now()
+);
+
+create index if not exists idx_wearable_readings_user_id on wearable_readings(user_id);
+create index if not exists idx_wearable_readings_captured_at on wearable_readings(captured_at);
