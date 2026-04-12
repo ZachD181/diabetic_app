@@ -14,6 +14,17 @@
         <p class="auth-copy">
           Sign in to manage dose estimates, glucose logs, and clinician recommendations in one place.
         </p>
+        <div class="build-banner compact-banner">
+          <div>
+            <p class="section-kicker">Closed testing build</p>
+            <strong>Built for real feedback, not just a demo.</strong>
+          </div>
+          <div class="hero-chip-list compact-chip-list">
+            <span class="hero-chip">Guest mode works today</span>
+            <span class="hero-chip">Provider linking included</span>
+            <span class="hero-chip">Support and deletion pages live</span>
+          </div>
+        </div>
         <div class="hero-chip-list">
           <span class="hero-chip">Patient login</span>
           <span class="hero-chip">Provider dashboard</span>
@@ -134,6 +145,21 @@
         </div>
       </header>
 
+      <section class="build-banner">
+        <div>
+          <p class="section-kicker">Tester build</p>
+          <strong>Thank you for helping shape the launch version.</strong>
+          <p class="panel-copy">
+            The fastest feedback right now is around dose flow clarity, wearable wording, and how easy it feels to log and review data on mobile.
+          </p>
+        </div>
+        <div class="hero-chip-list compact-chip-list">
+          <a class="hero-chip hero-link-chip" href="/support.html">Send feedback</a>
+          <a class="hero-chip hero-link-chip" href="/privacy.html">Review privacy</a>
+          <a class="hero-chip hero-link-chip" href="/delete-account.html">Request deletion</a>
+        </div>
+      </section>
+
       <section id="watch-strip" class="watch-strip is-hidden" aria-label="Watch companion">
         <article class="watch-card watch-hero">
           <p class="section-kicker">Watch companion</p>
@@ -174,6 +200,30 @@
               <span class="hero-chip">Food lookup linked</span>
               <span class="hero-chip">Insulin on board support</span>
               <span class="hero-chip">Provider recommendations</span>
+            </div>
+          </article>
+
+          <article class="panel quick-start-panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Quick start for testers</p>
+              <h3>Three places worth checking on your first pass</h3>
+            </div>
+            <div class="quick-start-grid">
+              <button type="button" class="quick-start-card" data-tab-target="foods">
+                <span class="quick-start-step">1</span>
+                <strong>Foods</strong>
+                <span>Search a meal, add carbs, and make sure the dose screen feels easy to trust.</span>
+              </button>
+              <button type="button" class="quick-start-card" data-tab-target="logbook">
+                <span class="quick-start-step">2</span>
+                <strong>Logbook</strong>
+                <span>Save a few glucose readings and check whether the chart and CSV flow feel clear on mobile.</span>
+              </button>
+              <button type="button" class="quick-start-card" data-tab-target="wearables">
+                <span class="quick-start-step">3</span>
+                <strong>Wearables</strong>
+                <span>Review what syncs now, what still needs platform work, and whether the emergency wording feels responsible.</span>
+              </button>
             </div>
           </article>
 
@@ -332,6 +382,11 @@
               </label>
 
               <label>
+                Bolus/Fast Acting dose (units)
+                <input id="log-dose" type="number" min="0" max="50" step="0.1" placeholder="Optional" />
+              </label>
+
+              <label>
                 Context
                 <select id="log-context">
                   <option value="Pre-meal">Pre-meal</option>
@@ -349,8 +404,17 @@
               </label>
             </form>
 
+            <div class="care-card dose-link-card">
+              <p class="section-kicker">Dose and logbook link</p>
+              <strong id="log-dose-helper">Current estimate: 0.0 units</strong>
+              <p class="panel-copy">
+                You can save the dose you actually take with the glucose reading, or pull a saved reading back into the dose calculator for a quick recalculation.
+              </p>
+            </div>
+
             <div class="action-row">
               <button id="save-log-entry" type="button">Save reading</button>
+              <button id="copy-dose-to-log" type="button" class="secondary-button">Use current estimate</button>
               <button id="export-csv" type="button" class="secondary-button">Export CSV</button>
               <button id="share-chart" type="button" class="secondary-button">Share chart with provider</button>
               <button id="clear-logbook" type="button" class="ghost-button">Clear logbook</button>
@@ -400,6 +464,24 @@
             <div class="panel-heading">
               <p class="section-kicker">Real wearable sync</p>
               <h2>Choose the platform path you want this account to use.</h2>
+            </div>
+
+            <div class="sync-status-grid">
+              <div class="sync-status-card">
+                <p class="section-kicker">Android</p>
+                <strong>Health Connect path is the most real today.</strong>
+                <p class="panel-copy">The Android app shell can request Health Connect permissions and pull supported vitals into this workflow.</p>
+              </div>
+              <div class="sync-status-card">
+                <p class="section-kicker">Apple / Oura / Samsung</p>
+                <strong>Integration-ready, not fully automatic yet.</strong>
+                <p class="panel-copy">Those options are now modeled in the app, but they still need native or provider-specific sync work before live auto-import is complete.</p>
+              </div>
+              <div class="sync-status-card">
+                <p class="section-kicker">Safety note</p>
+                <strong>Falls and responsiveness still need human input.</strong>
+                <p class="panel-copy">Even with wearable sync, collapse context and responsiveness checks are still manual so the emergency flow stays transparent.</p>
+              </div>
             </div>
 
             <form id="wearable-integration-form" class="field-grid">
@@ -679,6 +761,30 @@
               <div class="warning-card">Do not rely on this app alone for severe highs, lows, ketones, vomiting, illness, or pump or CGM alarms.</div>
               <div class="warning-card">Insulin on board logic differs by person and device. Confirm with your care team how much correction insulin should be subtracted.</div>
               <div class="warning-card">This prototype is not a production HIPAA deployment and would need secure hosting, audit logging, encryption, and legal review before real clinical use.</div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <p class="section-kicker">Testing feedback</p>
+              <h3>What helps most while this build is in closed testing</h3>
+            </div>
+
+            <div class="quick-notes-list">
+              <div class="recommendation-card">
+                <p class="section-kicker">Tell us where you got stuck</p>
+                <div class="panel-copy">The most useful notes mention the tab, your device, and whether you were signed in, linked to a clinician, or using guest mode.</div>
+              </div>
+              <div class="recommendation-card">
+                <p class="section-kicker">Use the live support page</p>
+                <div class="panel-copy">Questions, bugs, and tester feedback can all be routed through the support page so launch polish stays organized.</div>
+              </div>
+            </div>
+
+            <div class="action-row">
+              <a class="secondary-link-button" href="/support.html">Open support page</a>
+              <a class="ghost-link-button" href="/privacy.html">Review privacy policy</a>
+              <a class="ghost-link-button" href="/delete-account.html">Deletion request page</a>
             </div>
           </article>
         </section>

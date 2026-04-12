@@ -90,6 +90,34 @@ textarea {
   padding: 0 4px;
 }
 
+.build-banner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 16px;
+  margin: 0 12px 18px;
+  padding: 18px 20px;
+  border: 1px solid rgba(130, 240, 255, 0.18);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(93, 214, 255, 0.14), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 28%),
+    rgba(10, 22, 40, 0.84);
+  box-shadow: var(--shadow);
+}
+
+.compact-banner {
+  margin: 18px 0 0;
+}
+
+.compact-chip-list {
+  align-self: center;
+}
+
+.hero-link-chip {
+  color: var(--text);
+  text-decoration: none;
+}
+
 .app-header {
   display: flex;
   justify-content: space-between;
@@ -252,6 +280,80 @@ label,
   height: 180px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(130, 240, 255, 0.28), transparent 70%);
+}
+
+.quick-start-panel,
+.sync-status-grid,
+.quick-notes-list {
+  display: grid;
+  gap: 14px;
+}
+
+.quick-start-grid,
+.sync-status-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.quick-start-card,
+.sync-status-card {
+  text-align: left;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel-soft);
+  color: var(--text);
+}
+
+.quick-start-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 28%),
+    rgba(10, 21, 38, 0.92);
+}
+
+.quick-start-card span,
+.sync-status-card p {
+  color: var(--muted);
+}
+
+.quick-start-card strong,
+.sync-status-card strong {
+  font-size: 1.05rem;
+}
+
+.quick-start-step {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(93, 214, 255, 0.12);
+  color: var(--accent-strong);
+  font-weight: 800;
+}
+
+.secondary-link-button,
+.ghost-link-button {
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+
+.secondary-link-button {
+  background: rgba(15, 31, 54, 0.98);
+  color: var(--text);
+}
+
+.ghost-link-button {
+  background: transparent;
+  color: var(--muted);
 }
 
 .hero-chip-list {
@@ -443,8 +545,19 @@ button {
   gap: 10px;
 }
 
+.log-action-stack {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+
+.dose-link-card {
+  margin-top: 16px;
+}
+
 .selected-item .ghost-button,
-.result-action button {
+.result-action button,
+.log-action-stack .ghost-button {
   width: auto;
 }
 
@@ -558,6 +671,12 @@ button {
     align-items: stretch;
   }
 
+  .build-banner {
+    grid-template-columns: 1fr;
+    margin: 0 4px 16px;
+    padding: 16px;
+  }
+
   .header-actions {
     flex-direction: column;
     align-items: stretch;
@@ -630,6 +749,13 @@ body.watch-mode .auth-panel,
 body.watch-mode .watch-card {
   border-radius: 20px;
   padding: 16px;
+}
+
+body.watch-mode .build-banner,
+body.watch-mode .quick-start-panel,
+body.watch-mode .sync-status-grid,
+body.watch-mode .quick-notes-list {
+  display: none;
 }
 
 body.watch-mode .tab-bar {
